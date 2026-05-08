@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Auto-deploy on every push to main
+  push:
+    branches: [main]
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+# Permissions required by actions/deploy-pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one concurrent deploy; cancel any in-progress run when a new push arrives
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact (dist/)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Publishes the contents of dist/ — index.html is already there
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
