@@ -1,17 +1,17 @@
 // Features grid + tech stack ribbon
 const FEATURES = [
-  { k: '01', title: 'Declarative skills',  desc: 'SKILL.md frontmatter declares routing description, allowed tools, and policy. Body becomes the system prompt.' },
-  { k: '02', title: '3-layer memory',      desc: 'Working (Redis) for the live conversation, episodic (Mongo) for past sessions, knowledge (Mongo) for user facts.' },
-  { k: '03', title: 'Hybrid routing',      desc: 'Semantic similarity via in-process embeddings, with LLM fallback when nothing crosses the threshold.' },
-  { k: '04', title: 'Guardrail pipeline',  desc: 'PII masking, prompt-injection detection, rate limiting. Drop in your own with @Order — no forking.' },
-  { k: '05', title: 'Human-in-the-loop',   desc: '@RequiresApproval pauses execution and waits for user confirmation. TTL-bounded, resumable.' },
-  { k: '06', title: 'Multi-provider LLM',  desc: 'OpenAI, Anthropic, Azure. Rule-based routing per phase, with Resilience4j-driven failover to a fallback model.' },
-  { k: '07', title: 'Streaming + sync',    desc: 'SSE for tokens, sync for batch. Same handler, same memory, same trace.' },
-  { k: '08', title: 'Eval as code',        desc: 'Golden datasets per skill. LLM-as-Judge. Reports stored, diffable, run from /api/admin/evals/run.' },
-  { k: '09', title: 'Cost tracking',       desc: 'Per skill, per user, per provider, per phase. Aggregated summary endpoint, exportable.' },
-  { k: '10', title: 'MCP gateway',         desc: 'Optional. Expose your agent over MCP for Claude Desktop, Cursor, anything that speaks the protocol.' },
-  { k: '11', title: 'GraalVM native',      desc: 'Compile to a native image. Cold start < 100ms. Same code, no special branch.' },
-  { k: '12', title: 'Embedded mode',       desc: 'No Docker, no Mongo, no Redis. ConcurrentHashMaps everywhere. Perfect for prototypes and CI.' },
+  { k: '01', title: 'Declarative skills',  desc: 'SKILL.md frontmatter declares routing description, allowed tools, RBAC and RAG. Body becomes the system prompt. Hot-reloadable.' },
+  { k: '02', title: 'Java DSL',            desc: '@AgentSkill defines skills in Java with auto-detected tools. @AgentsFlow chains skills into multi-step pipelines — sequential, loop, parallel.' },
+  { k: '03', title: '3-layer memory',      desc: 'Working (Redis) for the live conversation, episodic (Mongo) for past sessions compressed locally via Ollama, knowledge (Mongo) for user facts.' },
+  { k: '04', title: 'Hybrid routing',      desc: 'Semantic similarity via in-process all-MiniLM-L6-v2 embeddings (~2ms), with LLM fallback when nothing crosses the 0.82 threshold.' },
+  { k: '05', title: 'Guardrail pipeline',  desc: 'PII masking, prompt-injection detection, rate limiting, schema validation. Drop in your own with @Order — no forking.' },
+  { k: '06', title: 'Human-in-the-loop',   desc: '@RequiresApproval pauses execution and waits for user confirmation before dangerous tools. TTL-bounded, resumable.' },
+  { k: '07', title: 'Multi-provider LLM',  desc: 'OpenAI, Anthropic, Azure, Ollama, plus any OpenAI-compatible endpoint. Circuit-breaker failover, per-provider rate limits, rule-based routing.' },
+  { k: '08', title: 'A2A + MCP',           desc: 'Agent-to-Agent JSON-RPC interop with /.well-known/agent.json discovery. MCP gateway exposes the agent to Claude Desktop, Cursor, VS Code.' },
+  { k: '09', title: 'RBAC · multi-tenant', desc: 'Role-based skill access via X-User-Roles. Automatic tenant data isolation via X-Tenant-Id. Immutable audit trail for SOC 2, GDPR, EU AI Act.' },
+  { k: '10', title: 'Streaming + sync',    desc: 'SSE for tokens, tool_call/tool_result events, approval requests. Sync endpoint for batch. Same handler, same memory, same trace.' },
+  { k: '11', title: 'Cost · observability', desc: 'Per-request token usage and cost by skill, user, provider. OpenTelemetry spans + Micrometer metrics with GenAI semantic conventions.' },
+  { k: '12', title: 'GraalVM · embedded',  desc: 'Native image: <100ms cold start, ~50MB. Embedded mode runs zero-infra: no Docker, no Mongo, no Redis. Kustomize + Helm + KEDA for prod.' },
 ];
 
 const STACK = [
@@ -33,7 +33,7 @@ function Features() {
             <h2 style={{ marginTop: 20, maxWidth: '20ch' }}>Everything an agent needs, nothing it doesn't.</h2>
           </div>
           <p className="lead" style={{ maxWidth: '36ch', margin: 0 }}>
-            Twelve subsystems, one Spring context. Add what you need with a starter, ignore the rest.
+            Twelve subsystems, one Spring context. Replace any @Bean to swap an implementation.
           </p>
         </div>
 

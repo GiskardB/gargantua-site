@@ -101,13 +101,19 @@ const InstallBar = () => {
 
   const snippets = {
     archetype: `mvn archetype:generate \\
-  -DarchetypeGroupId=ai.gargantua \\
+  -DarchetypeGroupId=com.github.giskardb.gargantua \\
   -DarchetypeArtifactId=agent-archetype \\
-  -DarchetypeVersion=1.0.0 \\
-  -DgroupId=com.mycompany -DartifactId=my-agent`,
-    embedded: `export LLM_PRIMARY_API_KEY=sk-...
+  -DarchetypeVersion=v1.2.2 \\
+  -DarchetypeRepository=https://jitpack.io \\
+  -DgroupId=com.mycompany -DartifactId=my-agent \\
+  -DagentName=MyAgent -DinteractiveMode=false`,
+    embedded: `export LLM_PRIMARY_PROVIDER=openai
+export LLM_PRIMARY_MODEL=gpt-4o
+export LLM_PRIMARY_API_KEY=sk-your-key
+export LLM_PRIMARY_ENDPOINT=https://api.openai.com/v1
 SPRING_PROFILES_ACTIVE=embedded mvn spring-boot:run`,
-    docker: `docker compose up -d mongo redis
+    docker: `docker compose up -d mongo redis ollama
+docker compose exec ollama ollama pull phi4-mini
 mvn spring-boot:run`,
   };
 
