@@ -106,7 +106,7 @@ function slugify(s) {
 
 // ── Sidebar groups ───────────────────────────────────────────────────────
 const SIDEBAR_GROUPS = [
-  { title: 'Getting started', slugs: ['skills-and-routing', 'tools-and-annotations', 'agent-dsl'] },
+  { title: 'Getting started', slugs: ['getting-started', 'skills-and-routing', 'tools-and-annotations', 'agent-dsl'] },
   { title: 'Runtime',         slugs: ['memory-system', 'guardrails', 'llm-configuration'] },
   { title: 'Reference',       slugs: ['api-reference', 'extending', 'deployment', 'architecture-diagrams'] },
 ];
@@ -316,6 +316,7 @@ function DocContent({ doc, anchor }) {
           <p className="blurb">{doc.blurb}</p>
         </div>
       </div>
+      {doc.slug === 'architecture-diagrams' && window.ArchitectureAnim && <window.ArchitectureAnim />}
       <div className="markdown" ref={containerRef} dangerouslySetInnerHTML={{ __html: html }} />
       {headings.length > 0 && (
         <nav className="toc">

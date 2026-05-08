@@ -9,6 +9,15 @@ function DocGlyph({ id, size = 22, color = 'currentColor' }) {
   const props = { width: s, height: s, viewBox: '0 0 32 32', fill: 'none', stroke: color, strokeWidth: sw, strokeLinecap: 'round', strokeLinejoin: 'round' };
 
   switch (id) {
+    case 'rocket': // Getting Started — rocket / launch
+      return (
+        <svg {...props}>
+          <path d="M16 4 C20 4 24 9 24 16 L24 22 L8 22 L8 16 C8 9 12 4 16 4 Z" />
+          <circle cx="16" cy="13" r="2.5" />
+          <path d="M8 22 L4 26 L9 25 M24 22 L28 26 L23 25" />
+          <path d="M13 26 L13 28 M16 27 L16 29 M19 26 L19 28" opacity="0.7" />
+        </svg>
+      );
     case 'route':  // Skills & Routing — branching paths
       return (
         <svg {...props}>
