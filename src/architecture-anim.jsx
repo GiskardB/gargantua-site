@@ -7,17 +7,17 @@ const { useState, useEffect, useRef } = React;
 // ── Pipeline definition ─────────────────────────────────────────────────
 // Each node has: id, label, sublabel, x, y, group ('client' | 'pipeline' | 'sidecar' | 'output')
 const NODES = [
-  { id: 'client',    label: 'Client',          sub: 'REST · UI · MCP · A2A',     x: 60,   y: 280, group: 'client'  },
-  { id: 'guard-in',  label: 'Input Guardrails',sub: 'PII · Injection · RateLimit',x: 250, y: 120, group: 'pipeline'},
-  { id: 'router',    label: 'Skill Router',    sub: 'Semantic + LLM',            x: 460,  y: 120, group: 'pipeline'},
-  { id: 'rbac',      label: 'RBAC Re-check',   sub: 'Roles · Tenants',           x: 670,  y: 120, group: 'pipeline'},
-  { id: 'memory',    label: 'Memory Compose',  sub: 'Working · Episodic · Knowledge', x: 880, y: 120, group: 'pipeline' },
-  { id: 'prompt',    label: 'Prompt Builder',  sub: 'Token Budget',              x: 880,  y: 280, group: 'pipeline'},
-  { id: 'llm',       label: 'LLM Provider',    sub: 'Failover · Tools · HITL',   x: 670,  y: 280, group: 'pipeline'},
-  { id: 'guard-out', label: 'Output Guardrails',sub: 'PII · Schema · Disclaimer',x: 460,  y: 280, group: 'pipeline'},
-  { id: 'stream',    label: 'SSE Stream',      sub: 'Token-by-token',            x: 250,  y: 280, group: 'output'  },
-  { id: 'audit',     label: 'Audit Trail',     sub: 'Immutable log',             x: 460,  y: 440, group: 'sidecar' },
-  { id: 'cost',      label: 'Cost Tracking',   sub: 'Per skill / user',          x: 670,  y: 440, group: 'sidecar' },
+  { id: 'client',    label: 'Client',          sub: 'REST · UI · MCP · A2A',     x: 60,   y: 350, group: 'client'  },
+  { id: 'guard-in',  label: 'Input Guardrails',sub: 'PII · Injection · RateLimit',x: 310, y: 140, group: 'pipeline'},
+  { id: 'router',    label: 'Skill Router',    sub: 'Semantic + LLM',            x: 580,  y: 140, group: 'pipeline'},
+  { id: 'rbac',      label: 'RBAC Re-check',   sub: 'Roles · Tenants',           x: 850,  y: 140, group: 'pipeline'},
+  { id: 'memory',    label: 'Memory Compose',  sub: 'Working · Episodic · Knowledge', x: 1120, y: 140, group: 'pipeline' },
+  { id: 'prompt',    label: 'Prompt Builder',  sub: 'Token Budget',              x: 1120, y: 350, group: 'pipeline'},
+  { id: 'llm',       label: 'LLM Provider',    sub: 'Failover · Tools · HITL',   x: 850,  y: 350, group: 'pipeline'},
+  { id: 'guard-out', label: 'Output Guardrails',sub: 'PII · Schema · Disclaimer',x: 580,  y: 350, group: 'pipeline'},
+  { id: 'stream',    label: 'SSE Stream',      sub: 'Token-by-token',            x: 310,  y: 350, group: 'output'  },
+  { id: 'audit',     label: 'Audit Trail',     sub: 'Immutable log',             x: 580,  y: 560, group: 'sidecar' },
+  { id: 'cost',      label: 'Cost Tracking',   sub: 'Per skill / user',          x: 850,  y: 560, group: 'sidecar' },
 ];
 
 // Edges: source → target with optional curve hint and label
@@ -51,10 +51,10 @@ const STEPS = [
 ];
 
 // ── Geometry helpers ────────────────────────────────────────────────────
-const NODE_W = 168;
-const NODE_H = 76;
-const BOARD_W = 1140;
-const BOARD_H = 560;
+const NODE_W = 220;
+const NODE_H = 96;
+const BOARD_W = 1450;
+const BOARD_H = 720;
 
 function nodeCenter(id) {
   const n = NODES.find(n => n.id === id);
@@ -116,14 +116,14 @@ function ArchitectureAnim() {
 
           {/* Grid background */}
           <g className="arch-grid">
-            {Array.from({ length: 14 }, (_, i) => <line key={`v${i}`} x1={i*80} y1="0" x2={i*80} y2={BOARD_H} stroke="rgba(20,22,30,0.04)" />)}
-            {Array.from({ length: 8 }, (_, i) => <line key={`h${i}`} x1="0" y1={i*80} x2={BOARD_W} y2={i*80} stroke="rgba(20,22,30,0.04)" />)}
+            {Array.from({ length: 18 }, (_, i) => <line key={`v${i}`} x1={i*90} y1="0" x2={i*90} y2={BOARD_H} stroke="rgba(20,22,30,0.04)" />)}
+            {Array.from({ length: 9 }, (_, i) => <line key={`h${i}`} x1="0" y1={i*90} x2={BOARD_W} y2={i*90} stroke="rgba(20,22,30,0.04)" />)}
           </g>
 
           {/* Group labels */}
-          <text x="60" y="60" className="arch-group-label">CLIENT</text>
-          <text x="250" y="60" className="arch-group-label">REQUEST PIPELINE</text>
-          <text x="250" y={BOARD_H - 180} className="arch-group-label">SIDE CHANNELS</text>
+          <text x="60" y="70" className="arch-group-label">CLIENT</text>
+          <text x="310" y="70" className="arch-group-label">REQUEST PIPELINE</text>
+          <text x="310" y={BOARD_H - 200} className="arch-group-label">SIDE CHANNELS</text>
 
           {/* Sidecar (dashed) edges first so they're behind */}
           {SIDECAR_EDGES.map((e, i) => (
@@ -162,9 +162,9 @@ function ArchitectureAnim() {
             const wasJustVisited = activeEdge && (activeEdge.from === n.id);
             return (
               <g key={n.id} transform={`translate(${n.x}, ${n.y})`} className={`arch-node arch-node-${n.group}${isActive ? ' active' : ''}${wasJustVisited ? ' visited' : ''}`}>
-                <rect width={NODE_W} height={NODE_H} rx="10" />
-                <text x={NODE_W / 2} y={32} className="arch-node-label" textAnchor="middle">{n.label}</text>
-                <text x={NODE_W / 2} y={52} className="arch-node-sub" textAnchor="middle">{n.sub}</text>
+                <rect width={NODE_W} height={NODE_H} rx="12" />
+                <text x={NODE_W / 2} y={42} className="arch-node-label" textAnchor="middle">{n.label}</text>
+                <text x={NODE_W / 2} y={66} className="arch-node-sub" textAnchor="middle">{n.sub}</text>
               </g>
             );
           })}
@@ -210,7 +210,7 @@ function EdgeBadge({ from, to, label, active }) {
   const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
   return (
     <g transform={`translate(${mx}, ${my})`}>
-      <circle r="11" fill={active ? 'var(--gold)' : 'var(--panel)'} stroke={active ? 'var(--gold)' : 'var(--line-2)'} strokeWidth="1.2" />
+      <circle r="13" fill={active ? 'var(--gold)' : 'var(--panel)'} stroke={active ? 'var(--gold)' : 'var(--line-2)'} strokeWidth="1.4" />
       <text textAnchor="middle" dominantBaseline="central" className={`arch-edge-label${active ? ' active' : ''}`}>{label}</text>
     </g>
   );
