@@ -103,7 +103,7 @@ const InstallBar = () => {
     archetype: `mvn archetype:generate \\
   -DarchetypeGroupId=com.github.giskardb.gargantua \\
   -DarchetypeArtifactId=agent-archetype \\
-  -DarchetypeVersion=v1.2.2 \\
+  -DarchetypeVersion=v1.2.18 \\
   -DarchetypeRepository=https://jitpack.io \\
   -DgroupId=com.mycompany -DartifactId=my-agent \\
   -DagentName=MyAgent -DinteractiveMode=false`,

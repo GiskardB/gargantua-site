@@ -181,7 +181,7 @@ function TopBar({ onOpenSearch, current }) {
       <a className="brand" href="index.html" title="Back to home">
         <LogoMark size={22} color="var(--fg)" />
         <span>gargantua</span>
-        <span className="ver">docs · v1.2.2</span>
+        <span className="ver">docs · v1.2.18</span>
       </a>
       <div className="crumbs">
         Docs <span className="sep">/</span> <em>{current.title}</em>

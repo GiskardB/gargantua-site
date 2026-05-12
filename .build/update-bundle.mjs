@@ -1,88 +1,111 @@
-// Patch dist/docs.html with the latest src/docs-data.js content.
+// Patch dist/docs.html and dist/index.html with the latest sources.
 //
-// The bundle stores each asset under a UUID in a JSON manifest:
+// Both bundles store every asset under a UUID inside a JSON manifest:
 //   <script type="__bundler/manifest">{"<uuid>":{"mime":"...","compressed":true,"data":"<base64>"}}</script>
-// The docs-data.js asset is identifiable because:
-//   (a) it is referenced in the template before the React/Babel CDN scripts;
-//   (b) its mime is application/javascript and it's the one whose decompressed
-//       contents start with `// Auto-generated from docs/*.md`.
 //
-// We re-gzip + base64 the fresh docs-data.js and splice it back into the manifest.
+// docs/*.md  -> src/docs-data.js  -> the gzipped JS asset inside dist/docs.html
+//                                    whose first line is `// Auto-generated from docs/*.md`.
+// src/*.jsx  -> each .jsx is its own gzipped JS asset inside dist/index.html, identifiable
+//               by the first non-empty line of source (the file's "// Title" comment).
+//
+// We re-gzip + base64 each updated source and splice it back into the manifest.
 //
 // Usage: node .build/update-bundle.mjs
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync, gunzipSync } from 'node:zlib';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const bundlePath = join(root, 'dist/docs.html');
-const docsDataPath = join(root, 'src/docs-data.js');
 
-const bundle = readFileSync(bundlePath, 'utf8');
-const docsData = readFileSync(docsDataPath, 'utf8');
+/** Splice fresh content into the matching asset of a bundle file. */
+function patchBundle(bundlePath, replacements) {
+    if (!existsSync(bundlePath)) {
+        console.log(`(skipping) ${bundlePath} does not exist`);
+        return;
+    }
+    const bundle = readFileSync(bundlePath, 'utf8');
 
-// --- Locate the real manifest (skip the one referenced inside the unpacker script) ---
-function extractTag(marker) {
-    let i = bundle.indexOf(marker);
-    i = bundle.indexOf(marker, i + 1); // second occurrence
-    if (i < 0) throw new Error(`Could not find ${marker}`);
+    // --- Locate the real manifest (skip the one referenced inside the unpacker script) ---
+    let i = bundle.indexOf('__bundler/manifest');
+    i = bundle.indexOf('__bundler/manifest', i + 1);
+    if (i < 0) throw new Error(`Could not find manifest in ${bundlePath}`);
     const open = bundle.indexOf('>', i) + 1;
     const close = bundle.indexOf('</script>', open);
-    return { open, close, raw: bundle.slice(open, close) };
-}
+    const manifestRaw = bundle.slice(open, close);
+    const manifest = JSON.parse(manifestRaw.trim());
 
-const manifestPos = extractTag('__bundler/manifest');
-const manifestObj = JSON.parse(manifestPos.raw.trim());
+    // --- For each requested replacement, find the matching asset by header sniff ---
+    const candidates = Object.entries(manifest).filter(
+        ([, e]) => (e.mime === 'application/javascript' || e.mime === 'text/javascript') && e.compressed
+    );
 
-// --- Find the docs-data UUID by sniffing each decompressed JS asset ---
-const candidates = Object.entries(manifestObj).filter(
-    ([, e]) => e.mime === 'application/javascript' && e.compressed
-);
-
-let targetUuid = null;
-for (const [uuid, entry] of candidates) {
-    const compressed = Buffer.from(entry.data, 'base64');
-    try {
-        const decoded = gunzipSync(compressed).toString('utf8');
-        if (decoded.startsWith('// Auto-generated from docs/*.md')) {
-            targetUuid = uuid;
-            console.log(`Found docs-data asset: ${uuid} (size before: ${decoded.length} bytes)`);
-            break;
+    let patched = 0;
+    for (const { sourcePath, headerStartsWith } of replacements) {
+        if (!existsSync(sourcePath)) {
+            console.log(`  (no source) ${sourcePath} — skipped`);
+            continue;
         }
-    } catch (e) {
-        // Not gzip — skip.
+        let foundUuid = null;
+        for (const [uuid, entry] of candidates) {
+            try {
+                const decoded = gunzipSync(Buffer.from(entry.data, 'base64')).toString('utf8');
+                if (decoded.startsWith(headerStartsWith)) {
+                    foundUuid = uuid;
+                    break;
+                }
+            } catch (_) { /* not gzip — skip */ }
+        }
+        if (!foundUuid) {
+            console.log(`  (no match) ${sourcePath} — header "${headerStartsWith}" not found in any asset`);
+            continue;
+        }
+        const fresh = readFileSync(sourcePath, 'utf8');
+        const recompressed = gzipSync(Buffer.from(fresh, 'utf8'));
+        const newBase64 = recompressed.toString('base64');
+        manifest[foundUuid] = { ...manifest[foundUuid], data: newBase64 };
+        console.log(`  patched ${sourcePath} -> ${foundUuid} (${fresh.length} bytes, gzip=${recompressed.length})`);
+        patched++;
     }
+
+    if (!patched) {
+        console.log(`(no patches applied for ${bundlePath})`);
+        return;
+    }
+
+    // --- Splice the updated manifest JSON back into the bundle (preserve whitespace) ---
+    const leadingWs = manifestRaw.match(/^\s*/)[0];
+    const trailingWs = manifestRaw.match(/\s*$/)[0];
+    const newManifestJson = JSON.stringify(manifest);
+    const newBundle = bundle.slice(0, open) + leadingWs + newManifestJson + trailingWs + bundle.slice(close);
+
+    writeFileSync(bundlePath, newBundle, 'utf8');
+    console.log(`${bundlePath}: ${bundle.length} -> ${newBundle.length} bytes (${patched} assets patched)\n`);
 }
 
-if (!targetUuid) {
-    throw new Error('Could not locate the docs-data.js asset in the bundle');
-}
+// ────────────────────────────────────────────────────────────────────────
+// docs.html — pre-bundled markdown for the documentation site
+// ────────────────────────────────────────────────────────────────────────
+console.log('=== dist/docs.html ===');
+patchBundle(join(root, 'dist/docs.html'), [
+    { sourcePath: join(root, 'src/docs-data.js'),          headerStartsWith: '// Auto-generated from docs/*.md' },
+    { sourcePath: join(root, 'src/docs-app.jsx'),          headerStartsWith: '// Docs app' },
+    { sourcePath: join(root, 'src/docs-glyphs.jsx'),       headerStartsWith: '// Per-topic SVG glyphs' },
+    { sourcePath: join(root, 'src/architecture-anim.jsx'), headerStartsWith: '// Animated request-journey' },
+    { sourcePath: join(root, 'src/logo.jsx'),              headerStartsWith: '// Logo mark' },
+]);
 
-// --- Replace its data with the freshly-gzipped docs-data.js ---
-const newCompressed = gzipSync(Buffer.from(docsData, 'utf8'));
-const newBase64 = newCompressed.toString('base64');
-
-const previous = manifestObj[targetUuid];
-manifestObj[targetUuid] = {
-    ...previous,
-    data: newBase64,
-};
-
-console.log(`New docs-data size: ${docsData.length} bytes (gzip→${newCompressed.length}, base64→${newBase64.length})`);
-
-// --- Splice the updated manifest JSON back into the bundle ---
-//
-// JSON.stringify preserves ordering and is what the original bundler used
-// (single-line, no indentation). We keep the surrounding whitespace
-// unchanged so diffs stay tight.
-const leadingWs = manifestPos.raw.match(/^\s*/)[0];
-const trailingWs = manifestPos.raw.match(/\s*$/)[0];
-const newManifestJson = JSON.stringify(manifestObj);
-const newBundle = bundle.slice(0, manifestPos.open)
-    + leadingWs + newManifestJson + trailingWs
-    + bundle.slice(manifestPos.close);
-
-writeFileSync(bundlePath, newBundle, 'utf8');
-console.log(`Patched ${bundlePath} (size: ${bundle.length} → ${newBundle.length})`);
+// ────────────────────────────────────────────────────────────────────────
+// index.html — landing page, one asset per src/*.jsx
+// ────────────────────────────────────────────────────────────────────────
+console.log('=== dist/index.html ===');
+patchBundle(join(root, 'dist/index.html'), [
+    { sourcePath: join(root, 'src/hero.jsx'),         headerStartsWith: '// Hero' },
+    { sourcePath: join(root, 'src/features.jsx'),     headerStartsWith: '// Features grid + tech stack ribbon' },
+    { sourcePath: join(root, 'src/quickstart.jsx'),   headerStartsWith: '// Quick start' },
+    { sourcePath: join(root, 'src/architecture.jsx'), headerStartsWith: '// Architecture' },
+    { sourcePath: join(root, 'src/app.jsx'),          headerStartsWith: '// App entry' },
+    { sourcePath: join(root, 'src/logo.jsx'),         headerStartsWith: '// Logo mark' },
+    { sourcePath: join(root, 'src/blackhole.jsx'),    headerStartsWith: '// Black hole' },
+]);

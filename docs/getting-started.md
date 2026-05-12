@@ -46,7 +46,7 @@ The `maven-archetype-plugin` ignores `-DarchetypeRepository`, so the JitPack rep
 mvn archetype:generate \
   -DarchetypeGroupId=com.github.giskardb.gargantua \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=v1.2.2 \
+  -DarchetypeVersion=v1.2.18 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -262,7 +262,7 @@ Gargantua is distributed as a set of Maven libraries via **JitPack** — no auth
 
 ```xml
 <properties>
-    <gargantua.version>v1.2.2</gargantua.version>
+    <gargantua.version>v1.2.18</gargantua.version>
 </properties>
 
 <repositories>
@@ -300,7 +300,7 @@ Gargantua is distributed as a set of Maven libraries via **JitPack** — no auth
 | `agent-skill-linter-maven-plugin` | `com.github.giskardb.gargantua` | Build-time SKILL.md validation. |
 | `agent-archetype` | `com.github.giskardb.gargantua` | Maven archetype to scaffold new agent projects. |
 
-> JitPack uses the groupId `com.github.giskardb.gargantua` and versions match Git tags (e.g. `v1.2.2`). If you used the Maven archetype, the repository is **already configured** in the generated `pom.xml`.
+> JitPack uses the groupId `com.github.giskardb.gargantua` and versions match Git tags (e.g. `v1.2.18`). If you used the Maven archetype, the repository is **already configured** in the generated `pom.xml`.
 
 ---
 

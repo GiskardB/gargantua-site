@@ -7,7 +7,7 @@ const { useState, useEffect, useRef } = React;
 const LAYERS = [
   { id: 'req',  label: 'Request',     sub: 'POST /api/agent/chat',     detail: 'X-User-Id · X-Session-Id · message body',          tint: 0 },
   { id: 'grd',  label: 'Guardrails',  sub: 'PII · Injection · Rate',   detail: 'Ordered pipeline · masking · drop',                tint: 1 },
-  { id: 'rt',   label: 'Routing',     sub: 'Hybrid · semantic + LLM',  detail: 'all-MiniLM-L6 in-process · threshold 0.82',        tint: 2 },
+  { id: 'rt',   label: 'Routing',     sub: 'Hybrid · semantic + LLM',  detail: 'all-MiniLM-L6 in-process · 0.6 threshold · tunable',  tint: 2 },
   { id: 'mem',  label: 'Memory',      sub: '3-layer · Redis + Mongo',  detail: 'Working · episodic · knowledge',                   tint: 3 },
   { id: 'llm',  label: 'LLM',         sub: 'Multi-provider · failover', detail: 'OpenAI · Anthropic · Azure · Ollama · circuit breaker',  tint: 4 },
   { id: 'tool', label: 'Tools',       sub: '@AgentTool · retry · HITL', detail: 'Cache · approval · dry-run · structured output',  tint: 5 },
