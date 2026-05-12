@@ -199,7 +199,11 @@ button { font-family: inherit; }
 .main {
   grid-area: main;
   padding: 56px 64px 120px;
-  max-width: min(100%, 1100px);
+  /* Wider than the previous 1100px so diagrams, tables and code blocks
+     get more horizontal room. The TOC rail (fixed, ~220px) overlays on the
+     right via padding-right at >=1280px, so the effective text column
+     grows by the difference between the old and new max-width. */
+  max-width: min(100%, 1360px);
   display: flex; flex-direction: column;
   gap: 0;
 }
@@ -252,7 +256,11 @@ button { font-family: inherit; }
   font-size: 15.5px;
   line-height: 1.72;
   color: var(--fg);
-  max-width: 70ch;
+  /* Previously 70ch (~700px) which was great for plain prose but cramped
+     tables, mermaid diagrams, code blocks and the per-feature example
+     summaries that live in the docs now. 92ch keeps the line length
+     readable while letting wide content breathe. */
+  max-width: 92ch;
   overflow-wrap: break-word;
 }
 .markdown > *:first-child { margin-top: 36px; }
@@ -742,11 +750,13 @@ button { font-family: inherit; }
 
 /* TOC right rail */
 @media (min-width: 1280px) {
-  .main { padding-right: 280px; }
+  /* 240px = TOC width (200px) + a gap. Slightly tighter than the original
+     280px so the main column gains horizontal room. */
+  .main { padding-right: 240px; }
   .toc {
     position: fixed;
-    top: 96px; right: 28px;
-    width: 220px;
+    top: 96px; right: 24px;
+    width: 200px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     padding-left: 16px;
