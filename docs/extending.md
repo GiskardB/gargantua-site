@@ -438,27 +438,84 @@ metadata:
 ---
 ```
 
-### Implement a custom VectorStorePort
+### EmbeddingPort + the in-memory vector store (v1.2.18+)
 
-The framework provides `InMemoryVectorStore` for embedded mode. For production, implement `VectorStorePort` with your preferred vector database:
+The framework now ships **two** RAG-related ports:
+
+| Port                    | Default impl                                 | Purpose                                                                                        |
+|-------------------------|----------------------------------------------|------------------------------------------------------------------------------------------------|
+| `EmbeddingPort`         | `LangChain4jEmbeddingAdapter` over the in-process ONNX `all-MiniLM-L6-v2-quantized` model | Text → 384-dim vector. Auto-registered by `RagAutoConfiguration` so embedded apps get real embeddings out of the box. |
+| `VectorStorePort`       | `EmbeddingInMemoryVectorStore` (cosine similarity) | Stores chunks + searches by embedding. Replaces the legacy keyword-based `InMemoryVectorStore` as the embedded-mode default. The keyword store is still available for tests that intentionally exclude the embedding model. |
+
+> The default setup is good enough for development, tests, demos and
+> single-node deployments with up to a few thousand chunks. For
+> production-grade scale + persistence, implement your own
+> `VectorStorePort` against a real vector DB (pgvector, Qdrant, Milvus,
+> Pinecone, …) — see below.
+
+### Swap the embedding model
+
+Override the default `EmbeddingPort` to use a production-grade model
+(OpenAI `text-embedding-3-large`, Cohere, Vertex AI, an Azure deployment,
+…). The framework ships a generic LangChain4j adapter so most providers
+need zero custom code:
 
 ```java
+import ai.gargantua.core.rag.EmbeddingPort;
+import ai.gargantua.autoconfigure.LangChain4jEmbeddingAdapter;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class EmbeddingConfig {
+
+    @Bean
+    public EmbeddingPort openAiEmbeddingPort() {
+        return new LangChain4jEmbeddingAdapter(
+                OpenAiEmbeddingModel.builder()
+                        .apiKey(System.getenv("OPENAI_API_KEY"))
+                        .modelName("text-embedding-3-small")
+                        .build());
+    }
+}
+```
+
+The new bean wins over the framework's default via `@ConditionalOnMissingBean`.
+The in-memory vector store will pick it up automatically and re-embed
+chunks at the new dimension.
+
+### Implement a custom VectorStorePort (production)
+
+For a real vector database, implement `VectorStorePort` and register
+it as a bean. Take the `EmbeddingPort` as a constructor dependency so
+your adapter stays swappable across embedding providers:
+
+```java
+import ai.gargantua.core.rag.EmbeddingPort;
+import ai.gargantua.core.rag.RetrievedChunk;
 import ai.gargantua.core.rag.VectorStorePort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class VectorStoreConfig {
 
     @Bean
-    public VectorStorePort vectorStore() {
-        return new PineconeVectorStore(pineconeClient);
-        // The framework's InMemoryVectorStore will NOT be registered
+    public VectorStorePort vectorStore(EmbeddingPort embeddingPort) {
+        // Your implementation: embed the query with `embeddingPort`,
+        // run a kNN search against your DB, return RetrievedChunk records.
+        return new MyPgVectorStore(jdbcTemplate, embeddingPort);
     }
 }
 ```
 
-`VectorStorePort` follows the same `@ConditionalOnMissingBean` pattern as all other adapters.
+`VectorStorePort` follows the same `@ConditionalOnMissingBean` pattern
+as all other adapters — your bean wins, the framework's default is
+not registered. The `agent-example-rag` per-feature example exercises
+the full wiring end-to-end with the in-memory cosine store.
 
 ---
 
