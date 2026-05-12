@@ -5,7 +5,7 @@ const HeroSection = ({ diskSpeed = 1 }) => {
       <div className="container">
         <div className="grid">
           <div>
-            <div className="eyebrow reveal">Java 21 · MIT · v1.2.18</div>
+            <div className="eyebrow reveal">Java 21 · MIT · v1.2.19</div>
             <h1 className="reveal" style={{ marginTop: 20 }}>
               Build autonomous<br/>
               AI agents <em>in Java.</em>

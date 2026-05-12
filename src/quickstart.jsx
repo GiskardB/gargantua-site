@@ -101,10 +101,9 @@ const InstallBar = () => {
 
   const snippets = {
     archetype: `mvn archetype:generate \\
-  -DarchetypeGroupId=com.github.giskardb.gargantua \\
+  -DarchetypeGroupId=io.github.giskardb \\
   -DarchetypeArtifactId=agent-archetype \\
-  -DarchetypeVersion=v1.2.18 \\
-  -DarchetypeRepository=https://jitpack.io \\
+  -DarchetypeVersion=1.2.19 \\
   -DgroupId=com.mycompany -DartifactId=my-agent \\
   -DagentName=MyAgent -DinteractiveMode=false`,
     embedded: `export LLM_PRIMARY_PROVIDER=openai

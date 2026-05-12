@@ -16,7 +16,7 @@ const ACCENTS = {
 
 function ClosingCTA() {
   const [copied, setCopied] = React.useState(false);
-  const cmd = 'mvn archetype:generate -DarchetypeGroupId=com.github.giskardb.gargantua -DarchetypeArtifactId=agent-archetype -DarchetypeVersion=v1.2.18 -DarchetypeRepository=https://jitpack.io';
+  const cmd = 'mvn archetype:generate -DarchetypeGroupId=io.github.giskardb -DarchetypeArtifactId=agent-archetype -DarchetypeVersion=1.2.19';
   return (
     <section className="closing" data-screen-label="05 Closing">
       <div className="halo"></div>
@@ -28,8 +28,8 @@ function ClosingCTA() {
         <div className="install-row">
           <span style={{ color: 'var(--gold)' }}>$</span>
           <span style={{ color: 'var(--fg)' }}>mvn archetype:generate</span>
-          <span style={{ color: 'var(--fg-mute)' }}>-DarchetypeGroupId=com.github.giskardb.gargantua</span>
-          <span style={{ color: 'var(--fg-mute)' }}>-DarchetypeVersion=v1.2.18</span>
+          <span style={{ color: 'var(--fg-mute)' }}>-DarchetypeGroupId=io.github.giskardb</span>
+          <span style={{ color: 'var(--fg-mute)' }}>-DarchetypeVersion=1.2.19</span>
           <button className="copy-btn" onClick={() => {
             navigator.clipboard?.writeText(cmd).then(() => {
               setCopied(true);
@@ -56,7 +56,7 @@ function TopNav() {
         <a className="brand" href="#top">
           <LogoMark size={26} color="var(--fg)" />
           <span className="name">gargantua</span>
-          <span className="ver">v1.2.18</span>
+          <span className="ver">v1.2.19</span>
         </a>
         <ul>
           <li><a href="#quickstart">Quick start</a></li>
