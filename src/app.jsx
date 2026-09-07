@@ -16,7 +16,7 @@ const ACCENTS = {
 
 function ClosingCTA() {
   const [copied, setCopied] = React.useState(false);
-  const cmd = 'mvn archetype:generate -DarchetypeGroupId=io.github.giskardb -DarchetypeArtifactId=agent-archetype -DarchetypeVersion=1.2.19';
+  const cmd = 'curl -LO https://github.com/GiskardB/gargantua/releases/latest/download/gargantua-runtime.jar';
   return (
     <section className="closing" data-screen-label="05 Closing">
       <div className="halo"></div>
@@ -27,9 +27,8 @@ function ClosingCTA() {
         </h2>
         <div className="install-row">
           <span style={{ color: 'var(--gold)' }}>$</span>
-          <span style={{ color: 'var(--fg)' }}>mvn archetype:generate</span>
-          <span style={{ color: 'var(--fg-mute)' }}>-DarchetypeGroupId=io.github.giskardb</span>
-          <span style={{ color: 'var(--fg-mute)' }}>-DarchetypeVersion=1.2.19</span>
+          <span style={{ color: 'var(--fg)' }}>curl -LO github.com/GiskardB/gargantua/…</span>
+          <span style={{ color: 'var(--fg-mute)' }}>/releases/latest/download/gargantua-runtime.jar</span>
           <button className="copy-btn" onClick={() => {
             navigator.clipboard?.writeText(cmd).then(() => {
               setCopied(true);
@@ -56,7 +55,7 @@ function TopNav() {
         <a className="brand" href="#top">
           <LogoMark size={26} color="var(--fg)" />
           <span className="name">gargantua</span>
-          <span className="ver">v1.2.19</span>
+          <span className="ver">v1.4.0</span>
         </a>
         <ul>
           <li><a href="#quickstart">Quick start</a></li>
@@ -83,11 +82,12 @@ function Footer() {
       <div className="container row">
         <div>© 2026 Gargantua — MIT</div>
         <a href="https://github.com/GiskardB/gargantua">GitHub</a>
-        <a href="https://jitpack.io/#GiskardB/gargantua">JitPack</a>
+        <a href="https://central.sonatype.com/artifact/io.github.giskardb/agent-engine">Maven Central</a>
         <a href="https://github.com/GiskardB/gargantua-examples">Examples</a>
-        <a href="https://github.com/GiskardB/gargantua/tags">Releases</a>
+        <a href="https://github.com/GiskardB/PACT">PACT spec</a>
+        <a href="https://github.com/GiskardB/gargantua/releases">Releases</a>
         <div className="spacer"></div>
-        <div>Built in Java 21 · 1ε beyond the singularity</div>
+        <div>Built in Java 25 · 1ε beyond the singularity</div>
       </div>
     </footer>
   );

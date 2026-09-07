@@ -8,7 +8,7 @@ This guide walks you through installing, running, and customizing your first age
 
 ## Prerequisites
 
-- **Java 21+** — the framework uses Virtual Threads (Project Loom)
+- **Java 25+** — the framework uses Virtual Threads (Project Loom)
 - **Maven 3.9+**
 - An OpenAI-compatible API key *(or any LangChain4j-supported provider)*
 - *(Optional)* **Docker & Docker Compose** — for MongoDB, Redis, and Ollama in standard mode
@@ -27,7 +27,7 @@ The archetype lives on Maven Central along with the rest of the framework — no
 mvn archetype:generate \
   -DarchetypeGroupId=io.github.giskardb \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=1.2.19 \
+  -DarchetypeVersion=1.2.20 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -60,7 +60,7 @@ Then generate with the JitPack coordinates (note the `v` prefix on the version):
 mvn archetype:generate \
   -DarchetypeGroupId=com.github.giskardb.gargantua \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=v1.2.19 \
+  -DarchetypeVersion=v1.2.20 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -280,8 +280,8 @@ Gargantua publishes to **two channels**. Pick the one that suits your stage:
 
 | Channel | When to use | Coordinates                              | Versioning |
 |---------|-------------|------------------------------------------|------------|
-| **Maven Central** | Production — signed artifacts, immutable releases, no extra `<repository>` block. | `io.github.giskardb:agent-*` | semver, no prefix (`1.2.19`) |
-| **JitPack** | Snapshots, intermediate tags, `develop-SNAPSHOT`, branch builds — built on-demand at the consumer end. | `com.github.giskardb.gargantua:agent-*` | mirrors Git tags (`v1.2.19`) |
+| **Maven Central** | Production — signed artifacts, immutable releases, no extra `<repository>` block. | `io.github.giskardb:agent-*` | semver, no prefix (`1.2.20`) |
+| **JitPack** | Snapshots, intermediate tags, `develop-SNAPSHOT`, branch builds — built on-demand at the consumer end. | `com.github.giskardb.gargantua:agent-*` | mirrors Git tags (`v1.2.20`) |
 
 Both serve **the same source code** for tagged releases; the choice is purely operational.
 
@@ -289,7 +289,7 @@ Both serve **the same source code** for tagged releases; the choice is purely op
 
 ```xml
 <properties>
-    <gargantua.version>1.2.19</gargantua.version>
+    <gargantua.version>1.2.20</gargantua.version>
 </properties>
 
 <dependencies>
@@ -315,7 +315,7 @@ No `<repositories>` entry needed — Maven Central is queried by default.
 
 ```xml
 <properties>
-    <gargantua.version>v1.2.19</gargantua.version>
+    <gargantua.version>v1.2.20</gargantua.version>
 </properties>
 
 <repositories>
@@ -347,7 +347,7 @@ Use JitPack for `develop-SNAPSHOT` or for fix branches that have not yet been ta
 | `agent-skill-linter-maven-plugin` | `io.github.giskardb` | `com.github.giskardb.gargantua` | Build-time SKILL.md validation. |
 | `agent-archetype` | `io.github.giskardb` | `com.github.giskardb.gargantua` | Maven archetype to scaffold new agent projects. |
 
-> The archetype is on **both** channels. Default to the Maven Central coordinates (`io.github.giskardb:agent-archetype:1.2.19`) — no `settings.xml` needed. Fall back to the JitPack coordinates (`com.github.giskardb.gargantua:agent-archetype:v1.2.19`) only when you need a snapshot or branch build that isn't on Central yet.
+> The archetype is on **both** channels. Default to the Maven Central coordinates (`io.github.giskardb:agent-archetype:1.2.20`) — no `settings.xml` needed. Fall back to the JitPack coordinates (`com.github.giskardb.gargantua:agent-archetype:v1.2.20`) only when you need a snapshot or branch build that isn't on Central yet.
 
 ---
 
@@ -382,13 +382,13 @@ SPRING_PROFILES_ACTIVE=embedded mvn spring-boot:run
 
 | Component         | Version              |
 |-------------------|----------------------|
-| Java              | 21 (Virtual Threads) |
-| Spring Boot       | 4.0.4                |
+| Java              | 25 (Virtual Threads) |
+| Spring Boot       | 4.1.0                |
 | Spring Framework  | 7.0.5                |
 | LangChain4j       | 1.12.1               |
 | MongoDB           | 8.0                  |
 | Redis             | 7.4                  |
-| springdoc-openapi | 3.0.2                |
+| springdoc-openapi | 3.1.0                |
 | Resilience4j      | 2.3.0                |
 | Caffeine          | 3.2.0                |
 | MCP SDK           | 0.9.0                |

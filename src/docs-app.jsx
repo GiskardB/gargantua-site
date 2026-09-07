@@ -106,7 +106,7 @@ function slugify(s) {
 
 // ── Sidebar groups ───────────────────────────────────────────────────────
 const SIDEBAR_GROUPS = [
-  { title: 'Getting started', slugs: ['getting-started', 'skills-and-routing', 'tools-and-annotations', 'agent-dsl'] },
+  { title: 'Getting started', slugs: ['getting-started', 'delivery-modes', 'skills-and-routing', 'tools-and-annotations', 'agent-dsl'] },
   { title: 'Runtime',         slugs: ['memory-system', 'guardrails', 'llm-configuration'] },
   { title: 'Reference',       slugs: ['api-reference', 'extending', 'deployment', 'architecture-diagrams'] },
 ];
@@ -181,7 +181,7 @@ function TopBar({ onOpenSearch, current }) {
       <a className="brand" href="index.html" title="Back to home">
         <LogoMark size={22} color="var(--fg)" />
         <span>gargantua</span>
-        <span className="ver">docs · v1.2.19</span>
+        <span className="ver">docs · v1.4.0</span>
       </a>
       <div className="crumbs">
         Docs <span className="sep">/</span> <em>{current.title}</em>

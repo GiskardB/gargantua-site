@@ -44,7 +44,7 @@ const STEPS = [
   { n: 3, title: 'Post-routing RBAC',  desc: 'Re-runs guardrails with the resolved skill for role-based access decisions.' },
   { n: 4, title: 'Memory Compose',     desc: 'Loads working (Redis), episodic & knowledge (MongoDB) memory in parallel.' },
   { n: 5, title: 'Prompt Builder',     desc: 'Runs context enrichers, injects memory, applies token budget for the model context window.' },
-  { n: 6, title: 'LLM Call',           desc: 'Streams tokens from the Primary provider; auto-failovers to fallback; calls @AgentTools and pauses on @RequiresApproval.' },
+  { n: 6, title: 'LLM Call',           desc: 'Streams tokens from the Primary provider; auto-failovers to fallback; calls tools (MCP or @AgentTool) and pauses on @RequiresApproval.' },
   { n: 7, title: 'Output Guardrails',  desc: 'PII redaction, schema validation, disclaimer injection.' },
   { n: 8, title: 'SSE Stream',         desc: 'Server-Sent Events deliver tokens to the client in real time, plus tool_call / tool_result events.' },
   { n: 9, title: 'Persist',            desc: 'Append to memory, chat history, cost tracker, and immutable audit trail (parallel writes).' },

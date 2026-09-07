@@ -68,7 +68,7 @@ sequenceDiagram
     Agent->>MC: compose(userId, sessionId, maxTokens)
     par Parallel fetch
         MC->>WM: getMessages(sessionId)
-        MC->>EM: getRecentSummaries(userId, 10)
+        MC->>EM: getRecentSummaries(userId, maxSummaries)
         MC->>KM: getSegments(userId)
     end
     WM-->>MC: List<ChatMessage>
@@ -149,7 +149,7 @@ The scheduler is conditional on `MongoTemplate` being available — embedded-mod
 | `sessionDate` | Instant | When the session started |
 | `expiresAt` | Instant | Optional TTL for the summary itself (null = never expires) |
 
-**Retrieval:** Summaries are sorted by `sessionDate` descending. The composer currently fetches up to 10 summaries per request (hardcoded) and then applies token budget truncation.
+**Retrieval:** Summaries are sorted by `sessionDate` descending. The composer fetches up to `agent.memory.episodic.max-summaries` summaries per request (default: 5) and then applies token budget truncation.
 
 **Configuration:**
 ```yaml
@@ -308,15 +308,19 @@ No manual database setup, schema migration, or collection creation is needed. Th
 
 ## Standalone library
 
-The memory layer is published as a separate Maven artifact (`ai.gargantua:agent-memory-sdk`) that you can use in any Spring Boot project without pulling in the full framework.
+The memory layer is published as a separate Maven artifact (`io.github.giskardb:agent-memory-sdk`) that you can use in any Spring Boot project without pulling in the full framework.
 
 ```xml
 <dependency>
-    <groupId>ai.gargantua</groupId>
+    <groupId>io.github.giskardb</groupId>
     <artifactId>agent-memory-sdk</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.20</version>
 </dependency>
 ```
+
+Snapshots/branch builds aren't on Central — use the JitPack coordinates instead
+(`com.github.giskardb.gargantua:agent-memory-sdk:v1.2.20`); see
+[`getting-started.md`](getting-started.md) for the two-channel explanation.
 
 The SDK auto-configures all three adapters and the `MemoryComposer` via `AgentMemoryAutoConfiguration`. Configuration binds to the `agentkit.memory.*` prefix:
 

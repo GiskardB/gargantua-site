@@ -5,16 +5,17 @@ const HeroSection = ({ diskSpeed = 1 }) => {
       <div className="container">
         <div className="grid">
           <div>
-            <div className="eyebrow reveal">Java 21 · MIT · v1.2.19</div>
+            <div className="eyebrow reveal">Java 25 · MIT · v1.4.0</div>
             <h1 className="reveal" style={{ marginTop: 20 }}>
-              Build autonomous<br/>
-              AI agents <em>in Java.</em>
+              Declare an agent.<br/>
+              Gargantua <em>runs it.</em>
             </h1>
             <p className="sub reveal">
-              Gargantua is a distributable framework built on Spring Boot 4.0.4 and LangChain4j 1.12.
-              You write a <code style={{ fontFamily: 'var(--mono)', color: 'var(--gold)' }}>SKILL.md</code> and
-              an <code style={{ fontFamily: 'var(--mono)', color: 'var(--gold)' }}>@AgentTool</code>.
-              Routing, 3-layer memory, guardrails, HITL, streaming, A2A, MCP, cost tracking — all included.
+              Write a <code style={{ fontFamily: 'var(--mono)', color: 'var(--gold)' }}>manifest.yaml</code> and
+              a <code style={{ fontFamily: 'var(--mono)', color: 'var(--gold)' }}>SKILL.md</code>, point at an MCP
+              server for tools, and a generic runtime executes it — no Java required. Routing, 3-layer memory,
+              guardrails, HITL, streaming, A2A, MCP, cost tracking — all included. Need tools that call your own
+              code instead? The same engine runs as a Java library, too.
             </p>
             <div className="cta reveal">
               <a className="btn btn-primary" href="#quickstart">
@@ -30,9 +31,9 @@ const HeroSection = ({ diskSpeed = 1 }) => {
               </a>
             </div>
             <div className="meta reveal">
-              <div><b>2 things to write.</b> Skill + Tool.</div>
-              <div><b>Zero infra mode.</b> Embedded by default.</div>
-              <div><b>&lt; 100ms cold start.</b> GraalVM native.</div>
+              <div><b>2 files, 0 code.</b> manifest.yaml + SKILL.md.</div>
+              <div><b>Download & run.</b> Released jar or Docker image.</div>
+              <div><b>Or write Java.</b> Same engine, as a library.</div>
             </div>
           </div>
           <div className="reveal">

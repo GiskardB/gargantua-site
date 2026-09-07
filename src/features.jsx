@@ -1,7 +1,7 @@
 // Features grid + tech stack ribbon
 const FEATURES = [
-  { k: '01', title: 'Declarative skills',  desc: 'SKILL.md frontmatter declares routing description, allowed tools, RBAC and RAG. Body becomes the system prompt. Hot-reloadable.' },
-  { k: '02', title: 'Java DSL',            desc: '@AgentSkill defines skills in Java with auto-detected tools. @AgentsFlow chains skills into multi-step pipelines — sequential, loop, parallel.' },
+  { k: '01', title: 'Declarative skills',  desc: 'SKILL.md (no code) or @AgentSkill (Java) declares routing description, allowed tools, RBAC and RAG. Body becomes the system prompt. Hot-reloadable either way.' },
+  { k: '02', title: 'PACT manifest',       desc: 'Every agent declares cognition, contract and interfaces per PACT, an open agent-description spec — served live at /.well-known/pact.json, not just on paper.' },
   { k: '03', title: '3-layer memory',      desc: 'Working (Redis) for the live conversation, episodic (Mongo) for past sessions compressed locally via Ollama, knowledge (Mongo) for user facts.' },
   { k: '04', title: 'Hybrid routing',      desc: 'Semantic similarity via in-process all-MiniLM-L6-v2 embeddings (~2ms), with LLM fallback when nothing crosses the configured threshold (default 0.6, tune in application.yml).' },
   { k: '05', title: 'Guardrail pipeline',  desc: 'PII masking, prompt-injection detection, rate limiting, schema validation. Drop in your own with @Order — no forking.' },
@@ -15,8 +15,8 @@ const FEATURES = [
 ];
 
 const STACK = [
-  { name: 'Java',         ver: '21 · Loom' },
-  { name: 'Spring Boot',  ver: '4.0.4' },
+  { name: 'Java',         ver: '25 · Loom' },
+  { name: 'Spring Boot',  ver: '4.1.0' },
   { name: 'LangChain4j',  ver: '1.12.1' },
   { name: 'MongoDB',      ver: '8.0' },
   { name: 'Redis',        ver: '7.4' },
