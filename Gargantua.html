@@ -94,9 +94,14 @@ nav.top ul {
 }
 nav.top ul a:hover { color: var(--fg); }
 nav.top .spacer { flex: 1; }
-nav.top .actions { display: flex; gap: 10px; align-items: center; }
+nav.top .actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
 
 @media (max-width: 860px) { nav.top ul { display: none; } }
+@media (max-width: 480px) {
+  nav.top .row { gap: 12px; }
+  nav.top .actions a.btn:not(.btn-primary) { display: none; }
+  .brand .ver { display: none; }
+}
 
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn {
@@ -390,6 +395,12 @@ p.lead { color: var(--fg-dim); font-size: 17px; line-height: 1.55; max-width: 60
   font-family: var(--mono); font-size: 13px;
   position: relative; z-index: 1;
   box-shadow: 0 8px 24px -16px rgba(20,22,30,0.25);
+  max-width: 100%; overflow-x: auto;
+  scrollbar-width: none;
+}
+.closing .install-row::-webkit-scrollbar { display: none; }
+@media (max-width: 640px) {
+  .closing .install-row { font-size: 11px; padding: 6px 6px 6px 14px; gap: 6px; }
 }
 .copy-btn {
   height: 32px; padding: 0 14px; border-radius: 999px;

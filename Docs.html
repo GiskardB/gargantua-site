@@ -40,7 +40,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); overflow-x: hidden; }
 body {
   font-family: var(--sans);
   font-feature-settings: "ss01", "cv11";
@@ -79,11 +79,13 @@ button { font-family: inherit; }
   background: color-mix(in oklab, var(--bg) 70%, transparent);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
+  min-width: 0;
 }
 .topbar .brand {
   display: flex; align-items: center; gap: 10px;
   font-family: var(--sans); font-weight: 500;
   font-size: 15px; letter-spacing: -0.01em;
+  flex-shrink: 0;
 }
 .topbar .brand .ver {
   font-family: var(--mono); font-size: 10.5px;
@@ -94,13 +96,21 @@ button { font-family: inherit; }
 .topbar .crumbs {
   font-family: var(--mono); font-size: 11.5px;
   color: var(--fg-mute); letter-spacing: 0.04em;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .topbar .crumbs em {
   font-style: normal; color: var(--fg);
 }
 .topbar .crumbs .sep { margin: 0 10px; opacity: 0.6; }
 .topbar .spacer { flex: 1; }
-.topbar .actions { display: flex; gap: 10px; align-items: center; }
+.topbar .actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; gap: 12px; }
+  .topbar .crumbs { display: none; }
+  .topbar .icon-btn span { display: none; }
+  .topbar .icon-btn kbd { display: none; }
+}
 .topbar .icon-btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 7px 12px; border-radius: 8px;

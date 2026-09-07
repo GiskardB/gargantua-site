@@ -108,7 +108,7 @@ function slugify(s) {
 const SIDEBAR_GROUPS = [
   { title: 'Getting started', slugs: ['getting-started', 'delivery-modes', 'skills-and-routing', 'tools-and-annotations', 'agent-dsl'] },
   { title: 'Runtime',         slugs: ['memory-system', 'guardrails', 'llm-configuration'] },
-  { title: 'Reference',       slugs: ['api-reference', 'extending', 'deployment', 'architecture-diagrams'] },
+  { title: 'Reference',       slugs: ['api-reference', 'extending', 'deployment', 'architecture-diagrams', 'pact'] },
 ];
 
 // ── Hash routing ─────────────────────────────────────────────────────────
