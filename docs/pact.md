@@ -1,4 +1,4 @@
-# PACT — Agent Contract Specification
+# PACT
 
 Gargantua's manifest (`gargantua.ai/v1`) covers governance, deployment and runtime
 concerns on its own. What it didn't have was a portable, vendor-neutral way to express

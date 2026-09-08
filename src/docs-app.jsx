@@ -81,7 +81,46 @@ if (window.marked) {
     return `<h${depth} id="${id}">${parseInline(text)}</h${depth}>`;
   };
 
+  // The source markdown is mirrored from gargantua's own docs/ folder and was authored
+  // for that folder's layout (sibling .md files, an architecture/ subfolder, a ../README.md
+  // one level up) — none of which exist as real URLs on this single hash-routed page.
+  // Rewrite relative .md links into this site's own #slug routing when the target is one
+  // of the docs mirrored here, or into a live GitHub link when it isn't (architecture/*,
+  // project-handoff.md, the root README) — never leave a dead relative path in the DOM.
+  const origLink = renderer.link.bind(renderer);
+  renderer.link = function (token) {
+    if (token && typeof token === 'object' && typeof token.href === 'string') {
+      token.href = rewriteDocHref(token.href);
+    }
+    return origLink.apply(renderer, arguments);
+  };
+
   window.marked.setOptions({ renderer, breaks: false, gfm: true });
+}
+
+function rewriteDocHref(href) {
+  if (!href || /^https?:\/\//.test(href) || href.startsWith('#') || href.startsWith('mailto:')) {
+    return href;
+  }
+  const hashIdx = href.indexOf('#');
+  const path = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
+  const fragment = hashIdx >= 0 ? href.slice(hashIdx + 1) : '';
+  if (!path.endsWith('.md')) return href; // not a doc reference (e.g. an image) — leave it
+
+  // A bare filename that's one of the docs this site itself mirrors becomes an in-app route.
+  if (!path.includes('/')) {
+    const slug = path.replace(/\.md$/, '');
+    const knownSlugs = (window.DOCS_INDEX || []).map((d) => d.slug);
+    if (knownSlugs.includes(slug)) {
+      return fragment ? `#${slug}#${fragment}` : `#${slug}`;
+    }
+  }
+
+  // Anything else (architecture/*, project-handoff.md, ../README.md) only exists in the
+  // main repo — link straight to it there instead of a path that 404s on this page.
+  const repoPath = path.startsWith('../') ? path.slice(3) : 'docs/' + path.replace(/^\.\//, '');
+  const url = `https://github.com/GiskardB/gargantua/blob/main/${repoPath}`;
+  return fragment ? `${url}#${fragment}` : url;
 }
 
 function parseInline(text) {
@@ -96,12 +135,18 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// Matches GitHub's own heading-slug algorithm, not just "something readable": every
+// mirrored doc has cross-reference links (#adr-003--bundles-are-..., #rag--vector-store)
+// written assuming GitHub's slugger, which replaces each whitespace character with its
+// own hyphen individually rather than collapsing a run — "RAG / Vector Store" becomes
+// "rag--vector-store" (double hyphen, from the two spaces left after "/" is stripped),
+// not "rag-vector-store". Collapsing runs (the previous version of this function) is
+// more conventional but silently breaks every link written against a real heading.
 function slugify(s) {
   return String(s).toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+    .replace(/\s/g, '-');
 }
 
 // ── Sidebar groups ───────────────────────────────────────────────────────

@@ -1,5 +1,12 @@
 # Tools & Annotations
 
+> **`@AgentTool` is Library mode only** — a compiled Java method needs your own
+> application to run in. In Runtime mode, tools come from **MCP servers** named in the
+> manifest instead — see [Consuming MCP servers](#consuming-mcp-servers) below, which
+> applies to both modes. Need a compiled Java tool in Runtime mode anyway? See
+> [Delivery Modes → When you need Java tools in runtime mode](#delivery-modes) — build a
+> custom runtime image and pin it in the manifest.
+
 ## @AgentTool
 
 The `@AgentTool` annotation marks a method as a tool that can be called by the LLM. Annotated methods are discovered at boot time by the `ToolRegistry`, which scans the Spring context for them and registers them alongside tools contributed by any other source.

@@ -1,6 +1,13 @@
 # Agent DSL — Skills and Flows in Java
 
-Gargantua offers two ways to define skills: **SKILL.md files** (declarative, hot-reloadable) and **Java annotations** (type-safe, co-located with tools). Both produce identical skills at runtime — the framework treats them the same way.
+> **Library mode only.** `@AgentSkill` and `@AgentsFlow` are Java annotations — they
+> require compiling and deploying your own application. Runtime mode doesn't have this
+> page's equivalent: skills are always plain `SKILL.md` files there (see
+> [Getting Started, Option A](#getting-started)), and multi-step orchestration isn't
+> available yet without building a custom runtime image (see
+> [Delivery Modes → When you need Java tools in runtime mode](#delivery-modes)).
+
+Gargantua offers two ways to define skills: **SKILL.md files** (declarative, hot-reloadable, work in *both* delivery modes) and **Java annotations** (type-safe, co-located with tools, Library mode only). Both produce identical skills at runtime — the framework treats them the same way.
 
 ---
 

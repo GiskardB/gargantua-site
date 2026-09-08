@@ -2,7 +2,15 @@
 
 ## SKILL.md Format
 
-Every skill is defined by a single `SKILL.md` file that combines YAML frontmatter with a markdown body. The frontmatter carries machine-readable metadata (name, version, allowed tools, model parameters). The markdown body is the **system prompt** injected when the skill is activated -- it tells the LLM how to behave while operating within this skill.
+`SKILL.md` is Gargantua's implementation of the open
+**[Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)**
+format — not a Gargantua-specific invention. Every skill is a single `SKILL.md` file that
+combines YAML frontmatter with a markdown body: the frontmatter carries machine-readable
+metadata (name, version, allowed tools, model parameters — Gargantua adds a few optional
+fields on top of the base standard, all covered below), and the markdown body is the
+**system prompt** injected when the skill is activated. Works identically in both
+[delivery modes](#delivery-modes) — a `SKILL.md` file doesn't know or care whether it's
+loaded from a Runtime-mode bundle or a Library-mode classpath.
 
 ### Complete Example
 

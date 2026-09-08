@@ -34,6 +34,10 @@ const HeroSection = ({ diskSpeed = 1 }) => {
               <div><b>2 files, 0 code.</b> manifest.yaml + SKILL.md.</div>
               <div><b>Download & run.</b> Released jar or Docker image.</div>
               <div><b>Or write Java.</b> Same engine, as a library.</div>
+              <div>
+                <b>Configured by env vars.</b> LLM provider, routing, audit —{' '}
+                <a href="https://github.com/GiskardB/gargantua#environment-variables-reference" target="_blank" rel="noreferrer" style={{ color: 'var(--gold)' }}>full reference</a>.
+              </div>
             </div>
           </div>
           <div className="reveal">

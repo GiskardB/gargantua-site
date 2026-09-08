@@ -12,6 +12,11 @@ const QuickStart = () => {
             Download the runtime, describe an agent as a manifest and a skill,
             run it. No Java, no build step, no clone.
           </p>
+          <p className="lead" style={{ marginTop: 12, fontSize: 14 }}>
+            Every feature below — LLM provider, routing strategy, audit — is configured
+            through environment variables passed to the runtime, not command-line flags. See the{' '}
+            <a href="https://github.com/GiskardB/gargantua#environment-variables-reference" target="_blank" rel="noreferrer">full environment variables reference</a>.
+          </p>
         </div>
 
         {/* Install bar */}
@@ -25,7 +30,12 @@ const QuickStart = () => {
               <span className="num">01</span>
               <h3>Describe the agent — <span style={{ fontFamily: 'var(--mono)', color: 'var(--fg-dim)' }}>manifest.yaml</span></h3>
             </header>
-            <p>What it's called, what it can do, which skill answers by default. No code.</p>
+            <p>
+              What it's called, what it can do, which skill answers by default. No code.
+              Composes with <a href="https://github.com/GiskardB/PACT" target="_blank" rel="noreferrer">PACT</a>,
+              an open agent-description spec — see <a href="docs.html#pact">PACT</a> and{' '}
+              <a href="docs.html#delivery-modes">Delivery Modes</a> for the full schema.
+            </p>
             <div className="code-card">
               <div className="code-head">
                 <div className="dots"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
@@ -52,7 +62,12 @@ const QuickStart = () => {
               <span className="num">02</span>
               <h3>Declare a skill — <span style={{ fontFamily: 'var(--mono)', color: 'var(--fg-dim)' }}>SKILL.md</span></h3>
             </header>
-            <p>Frontmatter declares routing description, tool bindings and policy. The body is the system prompt.</p>
+            <p>
+              Frontmatter declares routing description, tool bindings and policy. The
+              body is the system prompt. Follows the open{' '}
+              <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noreferrer">Agent Skills</a>{' '}
+              format — not a Gargantua-specific one.
+            </p>
             <div className="code-card">
               <div className="code-head">
                 <div className="dots"><div className="dot"></div><div className="dot"></div><div className="dot"></div></div>
