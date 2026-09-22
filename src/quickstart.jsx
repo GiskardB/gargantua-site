@@ -119,7 +119,7 @@ java -jar gargantua-runtime.jar run my-agent --spring.profiles.active=embedded`,
     archetype: `mvn archetype:generate \\
   -DarchetypeGroupId=io.github.giskardb \\
   -DarchetypeArtifactId=agent-archetype \\
-  -DarchetypeVersion=1.4.0 \\
+  -DarchetypeVersion=1.4.4 \\
   -DgroupId=com.mycompany -DartifactId=my-agent \\
   -DagentName=MyAgent -DinteractiveMode=false`,
   };

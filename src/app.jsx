@@ -55,7 +55,7 @@ function TopNav() {
         <a className="brand" href="#top">
           <LogoMark size={26} color="var(--fg)" />
           <span className="name">gargantua</span>
-          <span className="ver">v1.4.0</span>
+          <span className="ver">v1.4.4</span>
         </a>
         <ul>
           <li><a href="#quickstart">Quick start</a></li>
@@ -87,7 +87,7 @@ function Footer() {
         <a href="https://github.com/GiskardB/PACT">PACT spec</a>
         <a href="https://github.com/GiskardB/gargantua/releases">Releases</a>
         <div className="spacer"></div>
-        <div>Built in Java 25 · 1ε beyond the singularity</div>
+        <div>Built in Java 21 · 1ε beyond the singularity</div>
       </div>
     </footer>
   );

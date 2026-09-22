@@ -5,7 +5,7 @@ const HeroSection = ({ diskSpeed = 1 }) => {
       <div className="container">
         <div className="grid">
           <div>
-            <div className="eyebrow reveal">Java 25 · MIT · v1.4.0</div>
+            <div className="eyebrow reveal">Java 21 · MIT · v1.4.4</div>
             <h1 className="reveal" style={{ marginTop: 20 }}>
               Declare an agent.<br/>
               Gargantua <em>runs it.</em>

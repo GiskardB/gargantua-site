@@ -11,7 +11,7 @@ Gargantua uses [LangChain4j](https://docs.langchain4j.dev/) for LLM API calls. T
 | **OpenAI** | `openai` | OpenAI API | GPT-4o, GPT-4o-mini, etc. |
 | **Anthropic** | `anthropic` | Anthropic Messages API | Claude Sonnet, Haiku, Opus |
 | **Azure OpenAI** | `azure-openai` | OpenAI-compatible | Set endpoint to your Azure resource URL |
-| **Ollama** | `ollama` | OpenAI-compatible | Local models. Default for routing. |
+| **Ollama** | `ollama` | OpenAI-compatible | Local models. Optional free/local override for the routing role. |
 | **LiteLLM** | `openai` | OpenAI-compatible | Set endpoint to your LiteLLM proxy |
 | **vLLM** | `openai` | OpenAI-compatible | Set endpoint to your vLLM server |
 | **Any OpenAI-compatible** | `openai` | OpenAI-compatible | Any server that speaks the `/v1/chat/completions` protocol |
@@ -118,14 +118,18 @@ agent:
       endpoint: ${LLM_PRIMARY_ENDPOINT:}               # Required only for azure-openai
       temperature: ${LLM_PRIMARY_TEMPERATURE:0.7}
       max-tokens: ${LLM_PRIMARY_MAX_TOKENS:1000}
+      api-version: ${LLM_PRIMARY_API_VERSION:}         # Azure OpenAI only — required for azure-openai
+      deployment-name: ${LLM_PRIMARY_DEPLOYMENT_NAME:} # Azure OpenAI only — defaults to model when blank
     fallback:
       provider: ${LLM_FALLBACK_PROVIDER:anthropic}
       model: ${LLM_FALLBACK_MODEL:claude-sonnet-4-20250514}
       api-key: ${LLM_FALLBACK_API_KEY:}
     routing-model:
-      provider: ${LLM_ROUTING_PROVIDER:ollama}
-      model: ${LLM_ROUTING_MODEL:phi4-mini}
-      endpoint: ${LLM_ROUTING_ENDPOINT:http://localhost:11434}
+      # Unset LLM_ROUTING_* and this rides on LLM_PRIMARY_* automatically —
+      # nothing extra to configure to get started.
+      provider: ${LLM_ROUTING_PROVIDER:${LLM_PRIMARY_PROVIDER:openai}}
+      model: ${LLM_ROUTING_MODEL:${LLM_PRIMARY_MODEL:gpt-4o}}
+      endpoint: ${LLM_ROUTING_ENDPOINT:${LLM_PRIMARY_ENDPOINT:https://api.openai.com/v1}}
       # temperature/max-tokens are inherited (0.7 / 1000) unless you set them.
       # Archetype-generated projects override them to 0.0 / 50 for cheap routing;
       # the standalone runtime image does not.
@@ -137,9 +141,9 @@ agent:
 |------|--------------------|------------------|---------|------|
 | **Primary** | Agent conversations — the LLM that answers the user | Every chat request | `openai` / `gpt-4o` | Per-token API cost |
 | **Fallback** | Automatic failover when primary fails (timeout, HTTP 5xx, rate limit) | Only on primary failure | `anthropic` / `claude-sonnet` | Per-token API cost |
-| **Routing** | Skill routing, session summaries, topic scope guardrail | Multiple times per request (internally) | `ollama` / `phi4-mini` | **Free** (local) |
+| **Routing** | Skill routing, session summaries, topic scope guardrail | Multiple times per request (internally) | Same as primary | Per-token API cost, unless overridden |
 
-> **Why Ollama for routing?** The routing model is called frequently (every request for skill selection, periodically for session summaries). Using a local model eliminates API costs for these internal operations. The `phi4-mini` model is small (~2GB) and fast enough for classification tasks.
+> **Want free/local routing instead?** The routing model is called frequently (every request for skill selection, periodically for session summaries) — running it on a local Ollama model eliminates API cost for these internal calls. Set `LLM_ROUTING_PROVIDER=ollama`, `LLM_ROUTING_MODEL=phi4-mini` (small, ~2GB, fast enough for classification), `LLM_ROUTING_ENDPOINT=http://localhost:11434` to opt in — the archetype-generated `docker-compose.yml` does exactly this out of the box.
 
 ### How failover works
 
@@ -158,6 +162,32 @@ Request → Primary LLM
 ```
 
 The circuit breaker tracks failures. After repeated failures, it **opens** and routes directly to fallback without waiting for primary to timeout. It periodically retries primary to check if it's recovered.
+
+### Azure OpenAI / Azure AI Foundry
+
+Set `provider: azure-openai` and use the resource base URL — **do not** paste the full URL with `/openai/responses?api-version=...` that the Azure portal shows for the Responses API:
+
+```bash
+set LLM_PRIMARY_PROVIDER=azure-openai
+set LLM_PRIMARY_MODEL=gpt-5.1
+set LLM_PRIMARY_API_KEY=<Azure OpenAI key>
+set LLM_PRIMARY_ENDPOINT=https://your-resource.cognitiveservices.azure.com
+set LLM_PRIMARY_API_VERSION=2025-04-01-preview
+set LLM_PRIMARY_DEPLOYMENT_NAME=gpt-5.1
+```
+
+| Variable | Purpose |
+|----------|---------|
+| `LLM_PRIMARY_ENDPOINT` | Azure resource base URL, no path or query string |
+| `LLM_PRIMARY_API_VERSION` | Required for Azure — must match the deployment's supported version |
+| `LLM_PRIMARY_DEPLOYMENT_NAME` | The Azure deployment name; defaults to `model` when left blank |
+
+`agent.llm.*.api-version` maps to `AzureOpenAiChatModel.builder().serviceVersion(...)`. If omitted, Gargantua falls back to `2024-08-01-preview` (and logs a warning).
+
+> **Common pitfalls:**
+> - 404 "Resource not found" — usually the endpoint still contains `/openai/responses?...` or the deployment name differs from the model id.
+> - Gargantua's built-in Azure provider uses the **Chat Completions** endpoint (`/openai/deployments/{deployment}/chat/completions`), not the Responses API. If your Foundry deployment exposes only the Responses API, provide a custom `ChatModel` bean instead.
+> - 400 "Unsupported parameter: 'max_tokens'" — newer Azure models (e.g. `gpt-5.1`) require `max_completion_tokens` instead of the legacy `max_tokens`. Set `LLM_PRIMARY_MAX_COMPLETION_TOKENS` (or `agent.llm.primary.max-completion-tokens`) to switch — this now applies to both the streaming and non-streaming chat models.
 
 ### Rate limiting
 
@@ -235,7 +265,8 @@ agent:
     # Failover model when the selected model fails
     fallback-alias: claude-sonnet
 
-    # Local model for internal operations (skill routing, summaries)
+    # Optional: opt routing into a separate, free local model instead of
+    # riding on primary-alias (the default when routing-model is omitted).
     routing-model:
       provider: ollama
       model: phi4-mini
@@ -407,7 +438,7 @@ When a request comes in, the model is selected in this order:
    │  Primary failed → automatic switch to fallback
 ```
 
-The **routing model** (Ollama / phi4-mini) is separate from this chain — it's only used for internal operations (skill routing, session summaries), never for user-facing conversations.
+The **routing model** (same as primary, unless `routing-model`/`LLM_ROUTING_*` overrides it) is separate from this chain — it's only used for internal operations (skill routing, session summaries), never for user-facing conversations.
 
 ---
 

@@ -15,7 +15,7 @@ This guide walks through both, Runtime mode first.
 
 ### Prerequisites
 
-- **Java 25+** (to run the downloaded jar) *(or Docker, to run the image instead)*
+- **Java 21+** (to run the downloaded jar) *(or Docker, to run the image instead)*
 - An OpenAI-compatible API key *(or any LangChain4j-supported provider)*
 
 ### 1. Download the runtime
@@ -141,7 +141,7 @@ agent is a feature inside a larger application.
 
 ### Prerequisites
 
-- **Java 25+** — the framework uses Virtual Threads (Project Loom)
+- **Java 21+** — the framework uses Virtual Threads (Project Loom)
 - **Maven 3.9+**
 - An OpenAI-compatible API key *(or any LangChain4j-supported provider)*
 - *(Optional)* **Docker & Docker Compose** — for MongoDB, Redis, and Ollama in standard mode
@@ -154,7 +154,7 @@ The archetype lives on Maven Central along with the rest of the framework — no
 mvn archetype:generate \
   -DarchetypeGroupId=io.github.giskardb \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=1.4.0 \
+  -DarchetypeVersion=1.4.4 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -187,7 +187,7 @@ Then generate with the JitPack coordinates (note the `v` prefix on the version):
 mvn archetype:generate \
   -DarchetypeGroupId=com.github.giskardb.gargantua \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=v1.4.0 \
+  -DarchetypeVersion=v1.4.4 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -288,7 +288,7 @@ Gargantua uses **three LLM roles** — each can be a different provider and mode
 |--------------|-------------------------------------------------------|-------------------------------------------|---------------------|
 | **Primary**  | Agent conversations — answers the user               | OpenAI `gpt-4o`                          | Per-token API cost  |
 | **Fallback** | Auto-failover when primary fails                     | Anthropic `claude-sonnet-4-20250514`     | Per-token (only on failure) |
-| **Routing**  | Internal: skill routing, session summaries           | Ollama `phi4-mini` (local)               | **Free** (if local) |
+| **Routing**  | Internal: skill routing, session summaries           | Same as primary (override with `LLM_ROUTING_*`) | Per-token, unless overridden |
 
 Copy `.env.example` to `.env` and fill in the primary provider. The **full environment
 variable reference — every variable, both LLM roles, infrastructure, routing, audit — is
@@ -307,11 +307,11 @@ export LLM_PRIMARY_ENDPOINT=https://api.openai.com/v1
 # export LLM_FALLBACK_API_KEY=your-azure-key
 # export LLM_FALLBACK_ENDPOINT=https://your-resource.openai.azure.com
 
-# ── Routing — local Ollama by default, no config needed ─────────
-# Override only to use a cloud provider for routing:
-# export LLM_ROUTING_PROVIDER=openai
-# export LLM_ROUTING_MODEL=gpt-4o-mini
-# export LLM_ROUTING_API_KEY=sk-...
+# ── Routing — rides on LLM_PRIMARY_* by default, no config needed ──
+# Override only to route on a separate (e.g. free local Ollama) model:
+# export LLM_ROUTING_PROVIDER=ollama
+# export LLM_ROUTING_MODEL=phi4-mini
+# export LLM_ROUTING_ENDPOINT=http://localhost:11434
 ```
 
 ### 4. Run
@@ -411,8 +411,8 @@ Gargantua publishes to **two channels**. Pick the one that suits your stage:
 
 | Channel | When to use | Coordinates                              | Versioning |
 |---------|-------------|------------------------------------------|------------|
-| **Maven Central** | Production — signed artifacts, immutable releases, no extra `<repository>` block. | `io.github.giskardb:agent-*` | semver, no prefix (`1.4.0`) |
-| **JitPack** | Snapshots, intermediate tags, `develop-SNAPSHOT`, branch builds — built on-demand at the consumer end. | `com.github.giskardb.gargantua:agent-*` | mirrors Git tags (`v1.4.0`) |
+| **Maven Central** | Production — signed artifacts, immutable releases, no extra `<repository>` block. | `io.github.giskardb:agent-*` | semver, no prefix (`1.4.4`) |
+| **JitPack** | Snapshots, intermediate tags, `develop-SNAPSHOT`, branch builds — built on-demand at the consumer end. | `com.github.giskardb.gargantua:agent-*` | mirrors Git tags (`v1.4.4`) |
 
 Both serve **the same source code** for tagged releases; the choice is purely operational.
 
@@ -420,7 +420,7 @@ Both serve **the same source code** for tagged releases; the choice is purely op
 
 ```xml
 <properties>
-    <gargantua.version>1.4.0</gargantua.version>
+    <gargantua.version>1.4.4</gargantua.version>
 </properties>
 
 <dependencies>
@@ -446,7 +446,7 @@ No `<repositories>` entry needed — Maven Central is queried by default.
 
 ```xml
 <properties>
-    <gargantua.version>v1.4.0</gargantua.version>
+    <gargantua.version>v1.4.4</gargantua.version>
 </properties>
 
 <repositories>
@@ -482,7 +482,7 @@ you only need Maven coordinates for Library mode.
 | `agent-skill-linter-maven-plugin` | `io.github.giskardb` | `com.github.giskardb.gargantua` | Build-time SKILL.md validation. |
 | `agent-archetype` | `io.github.giskardb` | `com.github.giskardb.gargantua` | Maven archetype to scaffold new agent projects. |
 
-> The archetype is on **both** channels. Default to the Maven Central coordinates (`io.github.giskardb:agent-archetype:1.4.0`) — no `settings.xml` needed. Fall back to the JitPack coordinates (`com.github.giskardb.gargantua:agent-archetype:v1.4.0`) only when you need a snapshot or branch build that isn't on Central yet.
+> The archetype is on **both** channels. Default to the Maven Central coordinates (`io.github.giskardb:agent-archetype:1.4.4`) — no `settings.xml` needed. Fall back to the JitPack coordinates (`com.github.giskardb.gargantua:agent-archetype:v1.4.4`) only when you need a snapshot or branch build that isn't on Central yet.
 
 ---
 
