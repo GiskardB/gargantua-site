@@ -28,15 +28,17 @@ Gargantua doesn't require PACT authorship for every agent. Concretely:
 - `spec.cognition`, `spec.contract` and `spec.interfaces` are real, tested fields on the
   `gargantua.ai/v1` manifest (`core.pact` in `agent-core`), covering PACT's Cognition,
   Contract and Interfaces pillars.
-- Every running agent serves its own PACT Core projection live at
-  `GET /.well-known/pact.json` — cache-controlled, not just a static file — the
-  standalone counterpart to the A2A Agent Card at `/.well-known/agent.json`.
+- Every Runtime-mode agent (one loaded from a `gargantua.ai/v1` bundle) serves its own
+  PACT Core projection live at `GET /.well-known/pact.json` — cache-controlled, not just
+  a static file — the standalone counterpart to the A2A Agent Card at
+  `/.well-known/agent.json`. Library-mode agents have no manifest to project from, so
+  they don't expose this endpoint unless you wire one up yourself.
 - `Identity` and `Purpose` (two more PACT pillars) have no dedicated manifest fields —
   they're derived from `metadata.owner` and `metadata.description`, which already answer
   close-enough questions.
 
 The full field-by-field mapping onto PACT's seven pillars lives in the main repo's
-[`docs/architecture/agent-manifest.md`](https://github.com/GiskardB/gargantua/blob/main/docs/architecture/agent-manifest.md#relationship-to-pact).
+[`docs/architecture/agent-manifest.md`](https://github.com/GiskardB/gargantua/blob/main/docs/architecture/agent-manifest.md) (see the "Relationship to PACT" note near the top).
 
 ## Why it's a separate repository
 

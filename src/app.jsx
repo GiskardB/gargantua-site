@@ -55,7 +55,7 @@ function TopNav() {
         <a className="brand" href="#top">
           <LogoMark size={26} color="var(--fg)" />
           <span className="name">gargantua</span>
-          <span className="ver">v1.4.4</span>
+          <span className="ver">v1.4.6</span>
         </a>
         <ul>
           <li><a href="#quickstart">Quick start</a></li>

@@ -154,7 +154,7 @@ The archetype lives on Maven Central along with the rest of the framework — no
 mvn archetype:generate \
   -DarchetypeGroupId=io.github.giskardb \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=1.4.4 \
+  -DarchetypeVersion=1.4.6 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -187,7 +187,7 @@ Then generate with the JitPack coordinates (note the `v` prefix on the version):
 mvn archetype:generate \
   -DarchetypeGroupId=com.github.giskardb.gargantua \
   -DarchetypeArtifactId=agent-archetype \
-  -DarchetypeVersion=v1.4.4 \
+  -DarchetypeVersion=v1.4.6 \
   -DgroupId=com.mycompany -DartifactId=my-agent \
   -Dversion=1.0.0 -DagentName=MyAgent -DinteractiveMode=false
 ```
@@ -411,8 +411,8 @@ Gargantua publishes to **two channels**. Pick the one that suits your stage:
 
 | Channel | When to use | Coordinates                              | Versioning |
 |---------|-------------|------------------------------------------|------------|
-| **Maven Central** | Production — signed artifacts, immutable releases, no extra `<repository>` block. | `io.github.giskardb:agent-*` | semver, no prefix (`1.4.4`) |
-| **JitPack** | Snapshots, intermediate tags, `develop-SNAPSHOT`, branch builds — built on-demand at the consumer end. | `com.github.giskardb.gargantua:agent-*` | mirrors Git tags (`v1.4.4`) |
+| **Maven Central** | Production — signed artifacts, immutable releases, no extra `<repository>` block. | `io.github.giskardb:agent-*` | semver, no prefix (`1.4.6`) |
+| **JitPack** | Snapshots, intermediate tags, `develop-SNAPSHOT`, branch builds — built on-demand at the consumer end. | `com.github.giskardb.gargantua:agent-*` | mirrors Git tags (`v1.4.6`) |
 
 Both serve **the same source code** for tagged releases; the choice is purely operational.
 
@@ -420,7 +420,7 @@ Both serve **the same source code** for tagged releases; the choice is purely op
 
 ```xml
 <properties>
-    <gargantua.version>1.4.4</gargantua.version>
+    <gargantua.version>1.4.6</gargantua.version>
 </properties>
 
 <dependencies>
@@ -446,7 +446,7 @@ No `<repositories>` entry needed — Maven Central is queried by default.
 
 ```xml
 <properties>
-    <gargantua.version>v1.4.4</gargantua.version>
+    <gargantua.version>v1.4.6</gargantua.version>
 </properties>
 
 <repositories>
@@ -482,7 +482,7 @@ you only need Maven coordinates for Library mode.
 | `agent-skill-linter-maven-plugin` | `io.github.giskardb` | `com.github.giskardb.gargantua` | Build-time SKILL.md validation. |
 | `agent-archetype` | `io.github.giskardb` | `com.github.giskardb.gargantua` | Maven archetype to scaffold new agent projects. |
 
-> The archetype is on **both** channels. Default to the Maven Central coordinates (`io.github.giskardb:agent-archetype:1.4.4`) — no `settings.xml` needed. Fall back to the JitPack coordinates (`com.github.giskardb.gargantua:agent-archetype:v1.4.4`) only when you need a snapshot or branch build that isn't on Central yet.
+> The archetype is on **both** channels. Default to the Maven Central coordinates (`io.github.giskardb:agent-archetype:1.4.6`) — no `settings.xml` needed. Fall back to the JitPack coordinates (`com.github.giskardb.gargantua:agent-archetype:v1.4.6`) only when you need a snapshot or branch build that isn't on Central yet.
 
 ---
 

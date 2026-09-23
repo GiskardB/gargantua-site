@@ -51,7 +51,7 @@ it — no upload step from this workflow is required.
 <dependency>
     <groupId>com.github.giskardb.gargantua</groupId>
     <artifactId>agent-engine</artifactId>
-    <version>v1.4.4</version>
+    <version>v1.4.6</version>
 </dependency>
 ```
 
